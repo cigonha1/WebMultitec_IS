@@ -14,19 +14,15 @@ Este projeto consiste no desenvolvimento de um sistema cliente-servidor utilizan
 
 O objetivo é demonstrar a integração e comunicação entre diferentes tecnologias, além de permitir a exportação e importação de dados nos formatos **XML e JSON**.  
 
----
-
 ## Requisitos
-Antes de começar, certifica-te de que tens instalados:
+Antes de começar, certifique-se de que tem instalados:
 
 - **Ubuntu**
 - **Python** (`python --version`)
 - **Pip** (`pip --version`)
 
----
-
 ## Instalação
-As dependências devem ser instaladas tanto no servidor como no cliente. Para isso, executa:
+As dependências devem ser instaladas tanto no servidor como no cliente. Para isso, execute:
 
 ### 1. Clonar o Repositório  
 ```bash
@@ -38,7 +34,7 @@ cd <nome-do-repositorio>
 ```bash
 pip install -r requirements.txt
 ```
----
+
 
 ## Configuração e Execução  
 
@@ -61,11 +57,11 @@ python servidor/services/graphql_service.py
 ```bash
 python servidor/services/grpc_service.py
 ```
----
+
 
 ## Exemplo de Chamadas (Postman)  
 
----
+
 
 ## Esquemas de Validação  
 
