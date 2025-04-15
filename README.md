@@ -191,7 +191,7 @@ print(response)
 Abaixo estão os prints capturados durante o processo de configuração do servidor:
 
 ### 1. Atualizar os repositórios e instalar o Apache  
-![Atualizar os repositórios e instalar o Apache](prints_configServer\Passo1.png)
+![Atualizar os repositórios e instalar o Apache](prints_configServer/Passo1.png)
 
 ### 2. Verificar se o serviço Apache está ativo  
 ![Verificar se o serviço Apache está ativo](prints_configServer/Passo2.png)  
@@ -216,7 +216,9 @@ Abaixo estão os prints capturados durante o processo de configuração do servi
 ![](prints_configServer/Passo7_5&10.png)
 
 ### 8. Associar o domínio personalizado ao IP  
+#### No Servidor
 ![No Servidor](prints_configServer/Passo8_1.png)  
+#### No Windows
 ![No Windows](prints_configServer/Passo8_2.png)  
 
 ### 9. Testar o domínio personalizado  
