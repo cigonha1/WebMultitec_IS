@@ -10,12 +10,12 @@ def create_book():
         "descricao": "Este é um livro de teste para o portefólio.",
         "estado": "pendente"  # Pode ser "pendente" ou "concluído"
     }
-    response = requests.post(f"{BASE_URL}/tasks", json=payload)
+    response = requests.post(f"{BASE_URL}/livros", json=payload)
     print("✅ Livro Criado:", response.json())
 
 # === READ ALL ===
 def get_all_books():
-    response = requests.get(f"{BASE_URL}/tasks")
+    response = requests.get(f"{BASE_URL}/livros")
     if response.status_code == 200:
         print("📋 Livros:")
         for book in response.json():
@@ -25,7 +25,7 @@ def get_all_books():
 
 # === READ BY ID ===
 def get_book_by_id(book_id):
-    response = requests.get(f"{BASE_URL}/tasks/{book_id}")
+    response = requests.get(f"{BASE_URL}/livros/{book_id}")
     if response.status_code == 200:
         print(f"🔎 Livro ID {book_id}:", response.json())
     else:
@@ -38,7 +38,7 @@ def update_book(book_id):
         "descricao": "Descrição atualizada para o livro.",
         "estado": "concluído"  # Alternar estado para "concluído"
     }
-    response = requests.put(f"{BASE_URL}/tasks/{book_id}", json=payload)
+    response = requests.put(f"{BASE_URL}/livros/{book_id}", json=payload)
     if response.status_code == 200:
         print("✏️ Livro Atualizado:", response.json())
     else:
@@ -46,7 +46,7 @@ def update_book(book_id):
 
 # === DELETE ===
 def delete_book(book_id):
-    response = requests.delete(f"{BASE_URL}/tasks/{book_id}")
+    response = requests.delete(f"{BASE_URL}/livros/{book_id}")
     if response.status_code == 200:
         print("🗑️ Livro Apagado:", response.json())
     else:

@@ -23,7 +23,7 @@ def listar_livros():
     """Lista todos os livros no portfólio."""
     query = """
     query {
-        tasks {
+        livros {
             id
             titulo
             descricao
@@ -33,7 +33,7 @@ def listar_livros():
     """
     resultado = executar_query(query)
     if resultado and 'data' in resultado:
-        for livro in resultado['data']['tasks']:
+        for livro in resultado['data']['livros']:
             print(f"ID: {livro['id']}, Título: {livro['titulo']}, Estado: {livro['estado']}")
     else:
         print("Erro ao obter a lista de livros.")
@@ -42,7 +42,7 @@ def obter_livro(id_livro):
     """Obtém os detalhes de um livro específico pelo ID."""
     query = """
     query ($id: Int!) {
-        task(id: $id) {
+        livro(id: $id) {
             id
             titulo
             descricao
@@ -53,7 +53,7 @@ def obter_livro(id_livro):
     variables = {'id': id_livro}
     resultado = executar_query(query, variables)
     if resultado and 'data' in resultado:
-        livro = resultado['data']['task']
+        livro = resultado['data']['livro']
         if livro:
             print(f"ID: {livro['id']}, Título: {livro['titulo']}, Descrição: {livro['descricao']}, Estado: {livro['estado']}")
         else:
@@ -65,8 +65,8 @@ def adicionar_livro(id_livro, titulo, descricao, estado):
     """Adiciona um novo livro ao portfólio."""
     mutation = """
     mutation ($id: Int!, $titulo: String!, $descricao: String!, $estado: String!) {
-        createTask(id: $id, titulo: $titulo, descricao: $descricao, estado: $estado) {
-            task {
+        createLivro(id: $id, titulo: $titulo, descricao: $descricao, estado: $estado) {
+            livro {
                 id
                 titulo
                 descricao
@@ -78,7 +78,7 @@ def adicionar_livro(id_livro, titulo, descricao, estado):
     variables = {'id': id_livro, 'titulo': titulo, 'descricao': descricao, 'estado': estado}
     resultado = executar_query(mutation, variables)
     if resultado and 'data' in resultado:
-        livro = resultado['data']['createTask']['task']
+        livro = resultado['data']['createLivro']['livro']
         print(f"Livro adicionado: ID: {livro['id']}, Título: {livro['titulo']}")
     else:
         print("Erro ao adicionar o livro.")
@@ -87,19 +87,20 @@ def atualizar_livro(id_livro, titulo=None, descricao=None, estado=None):
     """Atualiza os detalhes de um livro existente."""
     mutation = """
     mutation ($id: Int!, $titulo: String, $descricao: String, $estado: String) {
-        updateTask(id: $id, titulo: $titulo, descricao: $descricao, estado: $estado) {
-            task {
+        updateLivro(id: $id, titulo: $titulo, descricao: $descricao, estado: $estado) {
+            livro {
                 id
                 titulo
                 descricao
                 estado
             }
         }
+    }
     """
     variables = {'id': id_livro, 'titulo': titulo, 'descricao': descricao, 'estado': estado}
     resultado = executar_query(mutation, variables)
     if resultado and 'data' in resultado:
-        livro = resultado['data']['updateTask']['task']
+        livro = resultado['data']['updateLivro']['livro']
         print(f"Livro atualizado: ID: {livro['id']}, Título: {livro['titulo']}")
     else:
         print("Erro ao atualizar o livro.")
@@ -108,7 +109,7 @@ def eliminar_livro(id_livro):
     """Elimina um livro do portfólio pelo ID."""
     mutation = """
     mutation ($id: Int!) {
-        deleteTask(id: $id) {
+        deleteLivro(id: $id) {
             ok
         }
     }
@@ -116,7 +117,7 @@ def eliminar_livro(id_livro):
     variables = {'id': id_livro}
     resultado = executar_query(mutation, variables)
     if resultado and 'data' in resultado:
-        print(resultado['data']['deleteTask']['ok'])
+        print(resultado['data']['deleteLivro']['ok'])
     else:
         print("Erro ao eliminar o livro.")
 

@@ -6,7 +6,7 @@ from graphene import ObjectType, String, Int, List, Field, Schema, Mutation
 
 # Caminho absoluto para o ficheiro de dados
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-DATA_FILE = os.path.join(BASE_DIR, 'data', 'tasks.json')
+DATA_FILE = os.path.join(BASE_DIR, 'data', 'livros.json')
 
 
 # Função para carregar os dados
@@ -24,103 +24,103 @@ def save_data(data):
         json.dump(data, f, indent=4)
 
 
-# Definir o modelo GraphQL para a Tarefa
-class TaskType(ObjectType):
+# Definir o modelo GraphQL para o Livro
+class LivroType(ObjectType):
     id = Int()
     titulo = String()
     descricao = String()
     estado = String()
 
 
-# Query para listar e obter tarefas
+# Query para listar e obter livros
 class Query(ObjectType):
-    tasks = List(TaskType)
-    task = Field(TaskType, id=Int(required=True))
+    livros = List(LivroType)
+    livro = Field(LivroType, id=Int(required=True))
 
-    def resolve_tasks(root, info):
-        """Resolver para listar todas as tarefas."""
+    def resolve_livros(root, info):
+        """Resolver para listar todos os livros."""
         return load_data()
 
-    def resolve_task(root, info, id):
-        """Resolver para obter uma tarefa específica pelo ID."""
-        tasks = load_data()
-        return next((task for task in tasks if task["id"] == id), None)
+    def resolve_livro(root, info, id):
+        """Resolver para obter um livro específico pelo ID."""
+        livros = load_data()
+        return next((livro for livro in livros if livro["id"] == id), None)
 
 
-# Mutation para criar, atualizar e eliminar tarefas
-class CreateTask(Mutation):
+# Mutation para criar, atualizar e eliminar livros
+class CreateLivro(Mutation):
     class Arguments:
         id = Int(required=True)
         titulo = String(required=True)
         descricao = String(required=True)
         estado = String(required=True)
 
-    task = Field(TaskType)
+    livro = Field(LivroType)
 
     def mutate(root, info, id, titulo, descricao, estado):
-        tasks = load_data()
+        livros = load_data()
 
         # Verificar ID único
-        if any(task["id"] == id for task in tasks):
-            raise Exception("Task with this ID already exists")
+        if any(livro["id"] == id for livro in livros):
+            raise Exception("Livro with this ID already exists")
 
-        new_task = {"id": id, "titulo": titulo, "descricao": descricao, "estado": estado}
-        tasks.append(new_task)
-        save_data(tasks)
-        return CreateTask(task=new_task)
+        new_livro = {"id": id, "titulo": titulo, "descricao": descricao, "estado": estado}
+        livros.append(new_livro)
+        save_data(livros)
+        return CreateLivro(livro=new_livro)
 
 
-class UpdateTask(Mutation):
+class UpdateLivro(Mutation):
     class Arguments:
         id = Int(required=True)
         titulo = String()
         descricao = String()
         estado = String()
 
-    task = Field(TaskType)
+    livro = Field(LivroType)
 
     def mutate(root, info, id, titulo=None, descricao=None, estado=None):
-        tasks = load_data()
-        task = next((t for t in tasks if t["id"] == id), None)
+        livros = load_data()
+        livro = next((l for l in livros if l["id"] == id), None)
 
-        if not task:
-            raise Exception("Task not found")
+        if not livro:
+            raise Exception("Livro not found")
 
         # Atualizar os campos fornecidos
         if titulo is not None:
-            task["titulo"] = titulo
+            livro["titulo"] = titulo
         if descricao is not None:
-            task["descricao"] = descricao
+            livro["descricao"] = descricao
         if estado is not None:
-            task["estado"] = estado
+            livro["estado"] = estado
 
-        save_data(tasks)
-        return UpdateTask(task=task)
+        save_data(livros)
+        return UpdateLivro(livro=livro)
 
 
-class DeleteTask(Mutation):
+class DeleteLivro(Mutation):
     class Arguments:
         id = Int(required=True)
 
     ok = String()
 
     def mutate(root, info, id):
-        tasks = load_data()
-        task = next((task for task in tasks if task["id"] == id), None)
+        livros = load_data()
+        livro = next((livro for livro in livros if livro["id"] == id), None)
 
-        if not task:
-            raise Exception("Task not found")
+        if not livro:
+            raise Exception("Livro not found")
 
-        tasks.remove(task)
-        save_data(tasks)
-        return DeleteTask(ok="Task deleted successfully")
+        livros.remove(livro)
+        save_data(livros)
+        return DeleteLivro(ok="Livro deleted successfully")
 
 
 # Definir as mutations no esquema
 class Mutation(ObjectType):
-    create_task = CreateTask.Field()
-    update_task = UpdateTask.Field()
-    delete_task = DeleteTask.Field()
+    create_livro = CreateLivro.Field()
+    update_livro = UpdateLivro.Field()
+    delete_livro = DeleteLivro.Field()
 
 
 # Criar o esquema
