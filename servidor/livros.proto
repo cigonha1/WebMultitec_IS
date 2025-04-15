@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package livros;
+
+// Importar a mensagem Empty do Well-Known Types
+import "google/protobuf/empty.proto";
+
+// Definição da mensagem para um Livro (Book)
+message Book {
+    int32 id = 1;
+    string titulo = 2;
+    string descricao = 3;
+    string estado = 4;
+}
+
+// Requisição para obter um livro pelo ID
+message GetBookRequest {
+    int32 id = 1;
+}
+
+// Resposta para listar todos os livros
+message ListBooksResponse {
+    repeated Book books = 1;
+}
+
+// Requisição para criar ou atualizar um livro
+message BookRequest {
+    Book book = 1;
+}
+
+// Resposta genérica para confirmar operações
+message OperationResponse {
+    string message = 1;
+}
+
+// Serviço gRPC para gerir o portfólio de livros
+service LivroService {
+    rpc ListBooks (google.protobuf.Empty) returns (ListBooksResponse);
+    rpc GetBook (GetBookRequest) returns (Book);
+    rpc CreateBook (BookRequest) returns (OperationResponse);
+    rpc UpdateBook (BookRequest) returns (OperationResponse);
+    rpc DeleteBook (GetBookRequest) returns (OperationResponse);
+}
