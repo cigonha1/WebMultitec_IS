@@ -22,7 +22,6 @@ Este projeto consiste no desenvolvimento de um sistema cliente-servidor utilizan
 ## Requisitos  
 
 Antes de começar, certifique-se de que o seu ambiente atende aos seguintes requisitos:  
-- **Sistema Operacional:** Ubuntu  
 - **Python:** Certifique-se de que o Python está instalado. Verifique a versão com:
   ```bash
   python --version
@@ -31,7 +30,7 @@ Antes de começar, certifique-se de que o seu ambiente atende aos seguintes requ
   ```bash
   pip --version
   ```
-- **MobaXterm:** Para acesso SSH ao servidor. O IP do servidor é: `192.168.246.33`.  
+- **MobaXterm ou Putty (Por exemplo):** Para acesso SSH ao servidor. O IP do servidor é: `192.168.246.33`.  
 
 ⚠️ **Nota:** Docker **não foi utilizado** neste projeto. Todo o código foi desenvolvido no **VSCode** e o servidor foi configurado manualmente via SSH.
 
@@ -56,22 +55,22 @@ pip install -r requirements.txt
 
 ## Configuração e Execução  
 
-### Iniciar o Servidor SOAP:
+### Iniciar no Servidor o serviço de SOAP:
 ```bash
 python3 var/www/Dmgp/soap/soap_service.py
 ```
 
-### Iniciar o Servidor REST:
+### Iniciar no Servidor o serviço de REST:
 ```bash
 python3 var/www/Dmgp/rest/rest_service.py
 ```
 
-### Iniciar o Servidor GraphQL:
+### Iniciar no Servidor o serviço de GraphQL:
 ```bash
 python3 var/www/Dmgp/graphql/graphql_service.py
 ```
 
-### Iniciar o Servidor gRPC:
+### Iniciar no Servidor o serviço de gRPC:
 ```bash
 python3 var/www/Dmgp/grpc/grpc_service.py
 ```
@@ -110,7 +109,7 @@ python3 var/www/Dmgp/grpc/grpc_service.py
 ```
 
 ---
-
+### GET
 #### Exemplo de Request: GET /livros/2
 ```http
 GET http://192.168.246.33:55556/livros/2 HTTP/1.1
@@ -181,43 +180,42 @@ print(response)
   "estado": "pendente"
 }
 ```
-```
 
 ---
 
 ## Prints dos Passos de Configuração  
 
-Abaixo estão os prints capturados durante o processo de configuração do servidor:  
+Abaixo estão os prints capturados durante o processo de configuração do servidor:
 
 ### 1. Remover o repositório do CD-ROM  
-![Remover o repositório do CD-ROM](WebMultitec_IS/prints_configServer/Passo1.png)  
+![Remover o repositório do CD-ROM](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print1.png)  
 
 ### 2. Atualizar os repositórios e instalar o Apache  
-![Atualizar os repositórios e instalar o Apache](path/para/print2.png)  
+![Atualizar os repositórios e instalar o Apache](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print2.png)  
 
 ### 3. Verificar se o serviço Apache está ativo  
-![Verificar se o serviço Apache está ativo](path/para/print3.png)  
+![Verificar se o serviço Apache está ativo](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print3.png)  
 
 ### 4. Garantir que o serviço Apache inicia automaticamente  
-![Garantir que o serviço Apache inicia automaticamente](path/para/print4.png)  
+![Garantir que o serviço Apache inicia automaticamente](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print4.png)  
 
 ### 5. Testar o servidor Apache  
-![Testar o servidor Apache](path/para/print5.png)  
+![Testar o servidor Apache](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print5.png)  
 
 ### 6. Apagar a página padrão do Apache  
-![Apagar a página padrão do Apache](path/para/print6.png)  
+![Apagar a página padrão do Apache](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print6.png)  
 
 ### 7. Criar um ficheiro `index.html` de teste  
-![Criar um ficheiro index.html de teste](path/para/print7.png)  
+![Criar um ficheiro index.html de teste](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print7.png)  
 
 ### 8. Configurar um Virtual Host  
-![Configurar um Virtual Host](path/para/print8.png)  
+![Configurar um Virtual Host](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print8.png)  
 
 ### 9. Associar o domínio personalizado ao IP  
-![Associar o domínio personalizado ao IP](path/para/print9.png)  
+![Associar o domínio personalizado ao IP](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print9.png)  
 
 ### 10. Testar o domínio personalizado  
-![Testar o domínio personalizado](path/para/print10.png)  
+![Testar o domínio personalizado](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print10.png)  
 
 ---
 
@@ -252,5 +250,4 @@ Trabalho Individual
 │               ├── livros_pb2_grpc.py
 │               ├── livros_pb2.py
 │               └── livros.proto
-
 ```
