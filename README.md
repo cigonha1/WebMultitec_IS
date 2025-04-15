@@ -191,31 +191,36 @@ print(response)
 Abaixo estão os prints capturados durante o processo de configuração do servidor:
 
 ### 1. Atualizar os repositórios e instalar o Apache  
-![Atualizar os repositórios e instalar o Apache](WebMultitec_IS/prints_configServer/Passo1.png)  
+![Atualizar os repositórios e instalar o Apache](prints_configServer\Passo1.png)
 
 ### 2. Verificar se o serviço Apache está ativo  
-![Verificar se o serviço Apache está ativo](WebMultitec_IS/prints_configServer/Passo2.png)  
+![Verificar se o serviço Apache está ativo](prints_configServer/Passo2.png)  
 
-### 4. Garantir que o serviço Apache inicia automaticamente  
-![Garantir que o serviço Apache inicia automaticamente](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print4.png)  
+### 3. Garantir que o serviço Apache inicia automaticamente  
+![Garantir que o serviço Apache inicia automaticamente](prints_configServer/Passo3.png)  
 
-### 5. Testar o servidor Apache  
-![Testar o servidor Apache](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print5.png)  
+### 4. Testar o servidor Apache  
+![Testar o servidor Apache](prints_configServer/Passo4.png)  
 
-### 6. Apagar a página padrão do Apache  
-![Apagar a página padrão do Apache](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print6.png)  
+### 5. Apagar a página padrão do Apache  
+![Apagar a página padrão do Apache](prints_configServer/Passo5.png)  
 
-### 7. Criar um ficheiro `index.html` de teste  
-![Criar um ficheiro index.html de teste](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print7.png)  
+### 6. Criar um ficheiro `index.html` de teste  
+![Criar um ficheiro index.html de teste](prints_configServer/Passo6.png)  
 
-### 8. Configurar um Virtual Host  
-![Configurar um Virtual Host](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print8.png)  
+### 7. Configurar um Virtual Host  
+![Configurar um Virtual Host](prints_configServer/Passo7_1&10.png)  
+![](prints_configServer/Passo7_2&10.png)
+![](prints_configServer/Passo7_3&10.png)
+![](prints_configServer/Passo7_4&10.png)
+![](prints_configServer/Passo7_5&10.png)
 
-### 9. Associar o domínio personalizado ao IP  
-![Associar o domínio personalizado ao IP](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print9.png)  
+### 8. Associar o domínio personalizado ao IP  
+![No Servidor](prints_configServer/Passo8_1.png)  
+![No Windows](prints_configServer/Passo8_2.png)  
 
-### 10. Testar o domínio personalizado  
-![Testar o domínio personalizado](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print10.png)  
+### 9. Testar o domínio personalizado  
+![Testar o domínio personalizado](prints_configServer/Passo9.png)  
 
 ---
 
@@ -238,16 +243,16 @@ Trabalho Individual
 │       │   │   └── soap_client.py
 │       │   └── documentacao
 │       │       └── requirements.txt
-│       ├── Prints da configuração do Server
+│       ├── prints_configServer
 │       └── servidor
 │           ├── data
 │           │   └── livros.json
-│           └── services
-│               ├── graphql_service.py
-│               ├── grpc_service.py
-│               ├── rest_service.py
-│               ├── soap_service.py
-│               ├── livros_pb2_grpc.py
-│               ├── livros_pb2.py
-│               └── livros.proto
+│           ├── services
+│           │   ├── graphql_service.py
+│           │   ├── grpc_service.py
+│           │   ├── rest_service.py
+│           │   └── soap_service.py
+│           ├── livros_pb2_grpc.py
+│           ├── livros_pb2.py
+│           └── livros.proto
 ```
