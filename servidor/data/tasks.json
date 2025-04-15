@@ -1,0 +1,56 @@
+[
+    {
+        "id": 2,
+        "titulo": "1984",
+        "descricao": "Um clássico de George Orwell sobre um futuro distópico.",
+        "estado": "pendente"
+    },
+    {
+        "id": 3,
+        "titulo": "Dom Quixote",
+        "descricao": "De Miguel de Cervantes, segue as aventuras de um cavaleiro.",
+        "estado": "pendente"
+    },
+    {
+        "id": 5,
+        "titulo": "Orgulho e Preconceito",
+        "descricao": "Romance clássico de Jane Austen.",
+        "estado": "pendente"
+    },
+    {
+        "id": 6,
+        "titulo": "O Apanhador no Campo de Centeio",
+        "descricao": "De J.D. Salinger, sobre a jornada de Holden Caulfield.",
+        "estado": "pendente"
+    },
+    {
+        "id": 7,
+        "titulo": "A Revolução dos Bichos",
+        "descricao": "Outra obra de George Orwell, uma sátira política.",
+        "estado": "pendente"
+    },
+    {
+        "id": 8,
+        "titulo": "Harry Potter e a Pedra Filosofal",
+        "descricao": "Primeiro livro da famosa série de J.K. Rowling.",
+        "estado": "pendente"
+    },
+    {
+        "id": 9,
+        "titulo": "O Pequeno Príncipe",
+        "descricao": "De Antoine de Saint-Exupéry, uma história com lições profundas.",
+        "estado": "pendente"
+    },
+    {
+        "id": 10,
+        "titulo": "Moby Dick",
+        "descricao": "De Herman Melville, sobre a obsessão do Capitão Ahab.",
+        "estado": "pendente"
+    },
+    {
+        "id": 11,
+        "titulo": "Cem Anos de Solidão",
+        "descricao": "De Gabriel García Márquez, um marco do realismo mágico.",
+        "estado": "pendente"
+    }
+]
