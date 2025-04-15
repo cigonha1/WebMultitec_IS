@@ -9,6 +9,9 @@
 ## Descrição  
 Este projeto consiste no desenvolvimento de um sistema cliente-servidor utilizando múltiplas tecnologias de serviços web. O objetivo principal é demonstrar a integração e comunicação entre diferentes tecnologias, além de permitir a exportação e importação de dados nos formatos **XML e JSON**.  
 
+### Nota Adicional:
+Antes de configurar os serviços no servidor fornecido pelo professor, todo o código foi desenvolvido no **VSCode** e testado localmente. Apenas após a realização destes testes é que o código foi transferido para o servidor e configurado.
+
 ### Tecnologias Utilizadas:
 - **REST** – Flask + JSON Schema + JSONPath  
 - **SOAP** – Spyne + Validação com XSD  
@@ -109,7 +112,7 @@ python3 var/www/Dmgp/grpc/grpc_service.py
 ```
 
 ---
-### GET
+### REST
 #### Exemplo de Request: GET /livros/2
 ```http
 GET http://192.168.246.33:55556/livros/2 HTTP/1.1
@@ -187,14 +190,11 @@ print(response)
 
 Abaixo estão os prints capturados durante o processo de configuração do servidor:
 
-### 1. Remover o repositório do CD-ROM  
-![Remover o repositório do CD-ROM](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print1.png)  
+### 1. Atualizar os repositórios e instalar o Apache  
+![Atualizar os repositórios e instalar o Apache](WebMultitec_IS/prints_configServer/Passo1.png)  
 
-### 2. Atualizar os repositórios e instalar o Apache  
-![Atualizar os repositórios e instalar o Apache](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print2.png)  
-
-### 3. Verificar se o serviço Apache está ativo  
-![Verificar se o serviço Apache está ativo](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print3.png)  
+### 2. Verificar se o serviço Apache está ativo  
+![Verificar se o serviço Apache está ativo](WebMultitec_IS/prints_configServer/Passo2.png)  
 
 ### 4. Garantir que o serviço Apache inicia automaticamente  
 ![Garantir que o serviço Apache inicia automaticamente](WebMultitec_IS/Prints%20da%20configuração%20do%20Server/print4.png)  
