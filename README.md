@@ -191,38 +191,38 @@ print(response)
 Abaixo estão os prints capturados durante o processo de configuração do servidor:
 
 ### 1. Atualizar os repositórios e instalar o Apache  
-![Atualizar os repositórios e instalar o Apache](prints_configServer/Passo1.png)
+![Atualizar os repositórios e instalar o Apache](documentacao/prints_configServer/Passo1.png)
 
 ### 2. Verificar se o serviço Apache está ativo  
-![Verificar se o serviço Apache está ativo](prints_configServer/Passo2.png)  
+![Verificar se o serviço Apache está ativo](documentacao/prints_configServer/Passo2.png)  
 
 ### 3. Garantir que o serviço Apache inicia automaticamente  
-![Garantir que o serviço Apache inicia automaticamente](prints_configServer/Passo3.png)  
+![Garantir que o serviço Apache inicia automaticamente](documentacao/prints_configServer/Passo3.png)  
 
 ### 4. Testar o servidor Apache  
-![Testar o servidor Apache](prints_configServer/Passo4.png)  
+![Testar o servidor Apache](documentacao/prints_configServer/Passo4.png)  
 
 ### 5. Apagar a página padrão do Apache  
-![Apagar a página padrão do Apache](prints_configServer/Passo5.png)  
+![Apagar a página padrão do Apache](documentacao/prints_configServer/Passo5.png)  
 
 ### 6. Criar um ficheiro `index.html` de teste  
-![Criar um ficheiro index.html de teste](prints_configServer/Passo6.png)  
+![Criar um ficheiro index.html de teste](documentacao/prints_configServer/Passo6.png)  
 
 ### 7. Configurar um Virtual Host  
-![Configurar um Virtual Host](prints_configServer/Passo7_1&10.png)  
-![](prints_configServer/Passo7_2&10.png)
-![](prints_configServer/Passo7_3&10.png)
-![](prints_configServer/Passo7_4&10.png)
-![](prints_configServer/Passo7_5&10.png)
+![Configurar um Virtual Host](documentacao/prints_configServer/Passo7_1&10.png)  
+![](documentacao/prints_configServer/Passo7_2&10.png)
+![](documentacao/prints_configServer/Passo7_3&10.png)
+![](documentacao/prints_configServer/Passo7_4&10.png)
+![](documentacao/prints_configServer/Passo7_5&10.png)
 
 ### 8. Associar o domínio personalizado ao IP  
 #### No Servidor
-![No Servidor](prints_configServer/Passo8_1.png)  
+![No Servidor](documentacao/prints_configServer/Passo8_1.png)  
 #### No Windows
-![No Windows](prints_configServer/Passo8_2.png)  
+![No Windows](documentacao/prints_configServer/Passo8_2.png)  
 
 ### 9. Testar o domínio personalizado  
-![Testar o domínio personalizado](prints_configServer/Passo9.png)  
+![Testar o domínio personalizado](documentacao/prints_configServer/Passo9.png)  
 
 ---
 

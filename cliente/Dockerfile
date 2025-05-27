@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.13.2
 
 # Set the working directory
 WORKDIR /app
@@ -16,4 +16,4 @@ COPY . .
 EXPOSE 5000
 
 # Start the application
-CMD ["python", "app.py"]
+CMD ["python", "cliente/app.py"]
