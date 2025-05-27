@@ -3,25 +3,45 @@ import json
 from flask import Flask, jsonify
 from flask_graphql import GraphQLView
 from graphene import ObjectType, String, Int, List, Field, Schema, Mutation
+from pymongo import MongoClient
+import pika
+import datetime
 
 # Caminho absoluto para o ficheiro de dados
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 DATA_FILE = os.path.join(BASE_DIR, 'data', 'livros.json')
 
 
-# Função para carregar os dados
-def load_data():
-    if not os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'w') as f:
-            json.dump([], f)
-    with open(DATA_FILE, 'r') as f:
-        return json.load(f)
+# Configurações MongoDB
+MONGO_URI = os.environ.get('MONGO_URI', 'mongodb://mongo:27017/')
+MONGO_DB = os.environ.get('MONGO_DB', 'biblioteca')
+MONGO_COLLECTION = os.environ.get('MONGO_COLLECTION', 'livros')
+
+# Configurações RabbitMQ
+RABBITMQ_HOST = os.environ.get('RABBITMQ_HOST', 'rabbitmq')
+RABBITMQ_QUEUE = os.environ.get('RABBITMQ_QUEUE', 'logs')
 
 
-# Função para salvar os dados
-def save_data(data):
-    with open(DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+def get_mongo_collection():
+    client = MongoClient(MONGO_URI)
+    db = client[MONGO_DB]
+    return db[MONGO_COLLECTION]
+
+
+def log_to_rabbitmq(message):
+    try:
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+        channel = connection.channel()
+        channel.queue_declare(queue=RABBITMQ_QUEUE, durable=True)
+        channel.basic_publish(
+            exchange='',
+            routing_key=RABBITMQ_QUEUE,
+            body=message.encode('utf-8'),
+            properties=pika.BasicProperties(delivery_mode=2)
+        )
+        connection.close()
+    except Exception as e:
+        print(f"Erro ao enviar log para RabbitMQ: {e}")
 
 
 # Definir o modelo GraphQL para o Livro
@@ -47,6 +67,12 @@ class Query(ObjectType):
         return next((livro for livro in livros if livro["id"] == id), None)
 
 
+# Função para carregar os dados
+def load_data():
+    collection = get_mongo_collection()
+    return list(collection.find({}, {'_id': 0}))
+
+
 # Mutation para criar, atualizar e eliminar livros
 class CreateLivro(Mutation):
     class Arguments:
@@ -58,15 +84,12 @@ class CreateLivro(Mutation):
     livro = Field(LivroType)
 
     def mutate(root, info, id, titulo, descricao, estado):
-        livros = load_data()
-
-        # Verificar ID único
-        if any(livro["id"] == id for livro in livros):
+        collection = get_mongo_collection()
+        if collection.find_one({'id': id}):
             raise Exception("Livro with this ID already exists")
-
         new_livro = {"id": id, "titulo": titulo, "descricao": descricao, "estado": estado}
-        livros.append(new_livro)
-        save_data(livros)
+        collection.insert_one(new_livro)
+        log_to_rabbitmq(f"[{datetime.datetime.now()}] Livro criado: {new_livro}")
         return CreateLivro(livro=new_livro)
 
 
@@ -80,21 +103,21 @@ class UpdateLivro(Mutation):
     livro = Field(LivroType)
 
     def mutate(root, info, id, titulo=None, descricao=None, estado=None):
-        livros = load_data()
-        livro = next((l for l in livros if l["id"] == id), None)
-
+        collection = get_mongo_collection()
+        livro = collection.find_one({'id': id})
         if not livro:
             raise Exception("Livro not found")
-
-        # Atualizar os campos fornecidos
+        update_fields = {}
         if titulo is not None:
-            livro["titulo"] = titulo
+            update_fields['titulo'] = titulo
         if descricao is not None:
-            livro["descricao"] = descricao
+            update_fields['descricao'] = descricao
         if estado is not None:
-            livro["estado"] = estado
-
-        save_data(livros)
+            update_fields['estado'] = estado
+        if update_fields:
+            collection.update_one({'id': id}, {'$set': update_fields})
+            livro.update(update_fields)
+            log_to_rabbitmq(f"[{datetime.datetime.now()}] Livro atualizado: {livro}")
         return UpdateLivro(livro=livro)
 
 
@@ -105,14 +128,12 @@ class DeleteLivro(Mutation):
     ok = String()
 
     def mutate(root, info, id):
-        livros = load_data()
-        livro = next((livro for livro in livros if livro["id"] == id), None)
-
+        collection = get_mongo_collection()
+        livro = collection.find_one({'id': id})
         if not livro:
             raise Exception("Livro not found")
-
-        livros.remove(livro)
-        save_data(livros)
+        collection.delete_one({'id': id})
+        log_to_rabbitmq(f"[{datetime.datetime.now()}] Livro removido: {livro}")
         return DeleteLivro(ok="Livro deleted successfully")
 
 
