@@ -1,20 +1,23 @@
-# Use uma imagem oficial do Python como base
+# Usa uma imagem oficial do Python como base
 FROM python:3.13.2
 
-# Defina o diretório de trabalho dentro do container
+# Define o diretório de trabalho
 WORKDIR /app
 
-# Copie os arquivos do serviço para o container
-COPY ../../documentacao/requirements.txt .
+# Copia primeiro o requirements.txt para aproveitar o cache de builds
+COPY requirements.txt .
 
-# Copie o restante dos arquivos do serviço para o container
-COPY . .
-
-# Instale as dependências
+# Instala as dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Exponha a porta usada pelo serviço SOAP
+# Copia todos os ficheiros do projeto para o container
+COPY . .
+
+# Garante que a pasta /data existe (para JSON/XML)
+RUN mkdir -p /app/data
+
+# Exponha a porta do serviço SOAP
 EXPOSE 55555
 
 # Comando para iniciar o serviço
-CMD ["python", "servidor/soap/soap_service.py"]
+CMD ["python", "soapservice.py"]

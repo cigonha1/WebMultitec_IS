@@ -50,6 +50,8 @@ services:
     depends_on:
       - mongodb
       - rabbitmq
+    volumes:
+      - ./servidor/soap/data:/app/data
   
   graphql:
     build: ./servidor/graphql
