@@ -16,7 +16,7 @@ Este projecto consiste no desenvolvimento de uma **aplicação cliente-servidor 
  
 
 ### Nota Adicional:
-Antes de configurar os serviços no servidor fornecido pelo professor, todo o código foi desenvolvido no **VSCode** e testado localmente. Apenas após a realização destes testes é que o código foi transferido para os servidores e configurado.
+Antes de configurar os serviços nos servidores fornecidos pelo professor, todo o código foi desenvolvido no **VSCode** e testado localmente. Apenas após a realização destes testes é que o código foi transferido para os servidores e configurado.
 
 ### Tecnologias Utilizadas:
 - **REST** – Flask + JSON Schema + JSONPath  
@@ -31,9 +31,8 @@ Antes de configurar os serviços no servidor fornecido pelo professor, todo o c�
 - **Persistência de Dados** – JSON (com capacidade de conversão para XML) 
 
 ---
----
 
-## 🧱 Arquitectura Distribuída
+## Arquitectura Distribuída
 
 - **Servidor 1**: SOAP + REST  
 - **Servidor 2**: GraphQL + gRPC + WebSockets  
@@ -318,10 +317,10 @@ WebMultitec_IS
 │    │   └── rest_service.py
 │    │
 │    ├── soap
-│    │    ├── Dockerfile
-│    │    └── soap_service.py
+│    │   ├── Dockerfile
+│    │   └── soap_service.py
 │    │
-│    ├──websocket     
+│    └── websocket     
 │        ├── Dockerfile
 │        └── websocket_server.py
 │ 
