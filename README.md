@@ -1,24 +1,67 @@
 # Trabalho Prático: Desenvolvimento de Serviços Web Multitecnologia
 
-**Discente:** Diogo Pedro (220000891)  
+**Grupo:**
+- Diogo Baltazar (230000424) 
+- Diogo Pedro (220000891)   
+- Pedro Ramiro (230001516)  
+
 **Docente:** Filipe Madeira  
 **Unidade Curricular:** Integração de Sistemas  
+
 
 ---
 
 ## Descrição  
-Este projeto consiste no desenvolvimento de um sistema cliente-servidor utilizando múltiplas tecnologias de serviços web. O objetivo principal é demonstrar a integração e comunicação entre diferentes tecnologias, além de permitir a exportação e importação de dados nos formatos **XML e JSON**.  
+Este projecto consiste no desenvolvimento de uma **aplicação cliente-servidor distribuída**, baseada no trabalho individual previamente desenvolvido. A arquitectura implementa a integração de diversas tecnologias de **serviços web multitecnologia** (REST, SOAP, GraphQL, gRPC, WebSockets), suportando também **mensageria assíncrona** e **autenticação com JWT/OAuth2**, com todos os serviços orquestrados através de **Docker** e **docker-compose**.
+ 
 
 ### Nota Adicional:
-Antes de configurar os serviços no servidor fornecido pelo professor, todo o código foi desenvolvido no **VSCode** e testado localmente. Apenas após a realização destes testes é que o código foi transferido para o servidor e configurado.
+Antes de configurar os serviços no servidor fornecido pelo professor, todo o código foi desenvolvido no **VSCode** e testado localmente. Apenas após a realização destes testes é que o código foi transferido para os servidores e configurado.
 
 ### Tecnologias Utilizadas:
 - **REST** – Flask + JSON Schema + JSONPath  
 - **SOAP** – Spyne + Validação com XSD  
 - **GraphQL** – Strawberry + FastAPI  
 - **gRPC** – Python gRPC (Protobuf)  
-- **Conversão entre JSON e XML**  
-- **Validações rigorosas** com schemas  
+- **WebSockets** – FastAPI WebSocket  
+- **Mensageria** – RabbitMQ  
+- **Autenticação** – OAuth 2.0 + JWT + FastAPI Users  
+- **Base de Dados** – MongoDB (NoSQL)  
+- **Orquestração** – Docker + docker-compose  
+- **Persistência de Dados** – JSON (com capacidade de conversão para XML) 
+
+---
+---
+
+## 🧱 Arquitectura Distribuída
+
+- **Servidor 1**: SOAP + REST  
+- **Servidor 2**: GraphQL + gRPC + WebSockets  
+- **Servidor 3**: MongoDB + Autenticação + RabbitMQ  
+- A comunicação entre serviços é feita via **HTTP, gRPC e AMQP (RabbitMQ)**  
+- Os dados são partilhados entre serviços através de **volumes Docker**
+
+---
+
+## 🐳 Execução com Docker
+
+Para iniciar os serviços:
+
+```bash
+docker-compose up --build
+```
+
+### Serviços definidos no `docker-compose.yml`:
+
+- `rest_service` – API REST com validação por JSON Schema  
+- `soap_service` – API SOAP com validação por XSD  
+- `graphql_service` – GraphQL com Strawberry  
+- `grpc_service` – Serviço gRPC com Protobuf  
+- `websocket_service` – Notificações em tempo real por WebSocket  
+- `auth_service` – Autenticação com OAuth2 / JWT  
+- `rabbitmq` – Broker de mensagens  
+- `mongodb` – Base de dados NoSQL  
+- `client` – Cliente Python (Web/CLI)
 
 ---
 
@@ -32,10 +75,7 @@ Antes de começar, certifique-se de que o seu ambiente atende aos seguintes requ
 - **Pip:** Certifique-se de que o Pip está instalado. Verifique a versão com:
   ```bash
   pip --version
-  ```
-- **MobaXterm ou Putty (Por exemplo):** Para acesso SSH ao servidor. O IP do servidor é: `192.168.246.33`.  
-
-⚠️ **Nota:** Docker **não foi utilizado** neste projeto. Todo o código foi desenvolvido no **VSCode** e o servidor foi configurado manualmente via SSH.
+  ```  
 
 ---
 
@@ -228,33 +268,63 @@ Abaixo estão os prints capturados durante o processo de configuração do servi
 
 ## Estrutura do Projeto  
 
-Abaixo está a estrutura do projeto, conforme exibido na imagem:
+Abaixo está a estrutura do projeto:
 
 ```
-Trabalho Individual
+WebMultitec_IS
 │
-├── AmbVirtualIS
-│   ├── Lib
-│   ├── Scripts
-│   └── WebMultitec_IS
-│       ├── cliente
-│       │   ├── requests
-│       │   │   ├── graphql_client.py
-│       │   │   ├── grpc_client.py
-│       │   │   ├── rest_client.py
-│       │   │   └── soap_client.py
-│       │   └── documentacao
-│       │       └── requirements.txt
-│       ├── prints_configServer
-│       └── servidor
-│           ├── data
-│           │   └── livros.json
-│           ├── services
-│           │   ├── graphql_service.py
-│           │   ├── grpc_service.py
-│           │   ├── rest_service.py
-│           │   └── soap_service.py
-│           ├── livros_pb2_grpc.py
-│           ├── livros_pb2.py
-│           └── livros.proto
+├── cliente
+│   ├── app.py
+│   ├── Dockerfile
+│   └── requests
+│       ├── graphql_client.py
+│       ├── grpc_client.py
+│       ├── rest_client.py
+│       └── soap_client.py
+│
+├── documentacao
+│   ├── requirements.txt
+│   └── prints_configServer
+│       ├── Passo1.png
+│       ├── Passo2.png
+│       ├── Passo3.png
+│       ├── Passo4.png
+│       ├── Passo5.png
+│       ├── Passo6.png
+│       ├── Passo7_1&10.png
+│       ├── Passo7_2&10.png
+│       ├── Passo7_3&10.png
+│       ├── Passo7_4&10.png
+│       ├── Passo7_5&10.png
+│       ├── Passo8_1.png
+│       ├── Passo8_2.png
+│       └── Passo9.png
+│
+├── servidor
+│    │
+│    ├── graphql
+│    │   ├── Dockerfile
+│    │   └── graphql_service.py
+│    │
+│    ├── grpc
+│    │   ├── Dockerfile
+│    │   ├── grpc_service.py
+│    │   ├── livros.proto
+│    │   ├── livros_pb2.py
+│    │   └── livros_pb2_grpc.py
+│    │
+│    ├── rest
+│    │   ├── Dockerfile
+│    │   └── rest_service.py
+│    │
+│    ├── soap
+│    │    ├── Dockerfile
+│    │    └── soap_service.py
+│    │
+│    ├──websocket     
+│        ├── Dockerfile
+│        └── websocket_server.py
+│ 
+├──docker-compose.yml
+
 ```
