@@ -1,45 +1,66 @@
 import os
-import json
-from concurrent import futures
 import grpc
+import jwt
+import pika
+import pymongo
+from datetime import datetime
+from concurrent import futures
+import livros_pb2, livros_pb2_grpc
 
-# Importar os ficheiros gerados pelo livros.proto
-from servidor import livros_pb2
-from servidor import livros_pb2_grpc
+# Chave secreta para validar o JWT
+JWT_SECRET = "segredo_super_secreto"
+JWT_ALGORITHM = "HS256"
 
-# Caminho absoluto para o ficheiro de dados
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATA_FILE = os.path.join(BASE_DIR, 'data', 'livros.json')
+# MongoDB connection
+mongo_client = pymongo.MongoClient("mongodb://mongodb:27017/")
+db = mongo_client["biblioteca"]
+collection = db["livros"]
 
-
-# Função para carregar os dados
-def load_data():
-    if not os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'w') as f:
-            json.dump([], f)
-    with open(DATA_FILE, 'r') as f:
-        return json.load(f)
-
-
-# Função para salvar os dados
-def save_data(data):
-    with open(DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+# RabbitMQ connection
+rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+channel = rabbit_connection.channel()
+channel.queue_declare(queue='livros.log')
 
 
-# Implementação do serviço LivroService
+def publish_log(action, book_id, user_id):
+    message = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "action": action,
+        "book_id": book_id,
+        "user_id": user_id
+    }
+    channel.basic_publish(exchange='', routing_key='livros.log', body=str(message))
+
+
+def validate_jwt(context):
+    """Valida o JWT e devolve o payload se válido, ou termina a requisição."""
+    metadata = dict(context.invocation_metadata())
+    token = metadata.get('authorization')
+
+    if not token or not token.startswith("Bearer "):
+        context.abort(grpc.StatusCode.UNAUTHENTICATED, "Token JWT ausente ou inválido.")
+
+    try:
+        jwt_token = token.split(" ")[1]
+        payload = jwt.decode(jwt_token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        context.abort(grpc.StatusCode.UNAUTHENTICATED, "Token expirado.")
+    except jwt.InvalidTokenError:
+        context.abort(grpc.StatusCode.UNAUTHENTICATED, "Token inválido.")
+
+
 class LivroService(livros_pb2_grpc.LivroServiceServicer):
     def ListBooks(self, request, context):
-        """Lista todos os livros."""
-        books = load_data()
+        validate_jwt(context)
+        books = list(collection.find({}, {"_id": 0}))
         return livros_pb2.ListBooksResponse(
             books=[livros_pb2.Book(**book) for book in books]
         )
 
     def GetBook(self, request, context):
-        """Obtém um livro específico pelo ID."""
-        books = load_data()
-        book = next((b for b in books if b["id"] == request.id), None)
+        validate_jwt(context)
+        book = collection.find_one({"id": request.id}, {"_id": 0})
         if book:
             return livros_pb2.Book(**book)
         context.set_code(grpc.StatusCode.NOT_FOUND)
@@ -47,58 +68,53 @@ class LivroService(livros_pb2_grpc.LivroServiceServicer):
         return livros_pb2.Book()
 
     def CreateBook(self, request, context):
-        """Cria um novo livro."""
-        books = load_data()
-        new_book = {
+        payload = validate_jwt(context)
+        book_dict = {
             "id": request.book.id,
             "titulo": request.book.titulo,
             "descricao": request.book.descricao,
-            "estado": request.book.estado,
+            "estado": request.book.estado
         }
 
-        # Verificar se o ID já existe
-        if any(book["id"] == new_book["id"] for book in books):
+        if collection.find_one({"id": book_dict["id"]}):
             context.set_code(grpc.StatusCode.ALREADY_EXISTS)
             context.set_details("Já existe um livro com este ID.")
-            return livros_pb2.OperationResponse(message="Falha ao criar o livro.")
+            return livros_pb2.OperationResponse(message="Erro ao criar livro.")
 
-        books.append(new_book)
-        save_data(books)
+        collection.insert_one(book_dict)
+        publish_log("create", book_dict["id"], payload["sub"])
         return livros_pb2.OperationResponse(message="Livro criado com sucesso.")
 
     def UpdateBook(self, request, context):
-        """Atualiza um livro existente."""
-        books = load_data()
-        book = next((b for b in books if b["id"] == request.book.id), None)
-        if not book:
+        payload = validate_jwt(context)
+        result = collection.update_one(
+            {"id": request.book.id},
+            {"$set": {
+                "titulo": request.book.titulo,
+                "descricao": request.book.descricao,
+                "estado": request.book.estado
+            }}
+        )
+        if result.matched_count == 0:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("Livro não encontrado.")
-            return livros_pb2.OperationResponse(message="Falha ao atualizar o livro.")
+            return livros_pb2.OperationResponse(message="Erro ao atualizar livro.")
 
-        # Atualizar os campos do livro
-        book.update({
-            "titulo": request.book.titulo,
-            "descricao": request.book.descricao,
-            "estado": request.book.estado,
-        })
-        save_data(books)
+        publish_log("update", request.book.id, payload["sub"])
         return livros_pb2.OperationResponse(message="Livro atualizado com sucesso.")
 
     def DeleteBook(self, request, context):
-        """Elimina um livro pelo ID."""
-        books = load_data()
-        book = next((b for b in books if b["id"] == request.id), None)
-        if not book:
+        payload = validate_jwt(context)
+        result = collection.delete_one({"id": request.id})
+        if result.deleted_count == 0:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("Livro não encontrado.")
-            return livros_pb2.OperationResponse(message="Falha ao eliminar o livro.")
+            return livros_pb2.OperationResponse(message="Erro ao eliminar livro.")
 
-        books.remove(book)
-        save_data(books)
+        publish_log("delete", request.id, payload["sub"])
         return livros_pb2.OperationResponse(message="Livro eliminado com sucesso.")
 
 
-# Configuração e execução do servidor gRPC
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     livros_pb2_grpc.add_LivroServiceServicer_to_server(LivroService(), server)

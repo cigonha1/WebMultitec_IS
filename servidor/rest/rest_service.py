@@ -1,79 +1,109 @@
-import sys
 import os
-import json
+import jwt
+import pika
 from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
+from pymongo import MongoClient
+from datetime import datetime
 
+# Configs
+JWT_SECRET = "segredo_super_secreto"
+JWT_ALGORITHM = "HS256"
+
+# Flask App
 app = Flask(__name__)
 api = Api(app)
 
-# Adiciona o diretório raiz do projeto ao sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+# MongoDB connection
+mongo_client = MongoClient("mongodb://mongodb:27017/")
+db = mongo_client["biblioteca"]
+collection = db["livros"]
 
-# Caminho absoluto para o ficheiro de dados
-BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-DATA_FILE = os.path.join(BASE_DIR, 'data', 'livros.json')
+# RabbitMQ connection
+rabbit_connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+channel = rabbit_connection.channel()
+channel.queue_declare(queue='livros.log')
 
-# Função para carregar os dados
-def load_data():
-    if not os.path.exists(DATA_FILE):
-        with open(DATA_FILE, 'w') as f:
-            json.dump([], f)
-    with open(DATA_FILE, 'r') as f:
-        return json.load(f)
 
-# Função para salvar os dados
-def save_data(data):
-    with open(DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+def publish_log(action, book_id, user_id):
+    message = {
+        "timestamp": datetime.utcnow().isoformat(),
+        "action": action,
+        "book_id": book_id,
+        "user_id": user_id
+    }
+    channel.basic_publish(exchange='', routing_key='livros.log', body=str(message))
 
-# Classe para o gerenciamento de livros
+
+def validate_jwt():
+    auth_header = request.headers.get("Authorization", None)
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return None, {"message": "Token JWT ausente ou inválido"}, 401
+    try:
+        token = auth_header.split(" ")[1]
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload, None, None
+    except jwt.ExpiredSignatureError:
+        return None, {"message": "Token expirado"}, 401
+    except jwt.InvalidTokenError:
+        return None, {"message": "Token inválido"}, 401
+
+
 class Livro(Resource):
     def get(self, livro_id=None):
-        livros = load_data()
+        payload, err, code = validate_jwt()
+        if err:
+            return err, code
+
         if livro_id is None:
+            livros = list(collection.find({}, {"_id": 0}))
             return jsonify(livros)
-        livro = next((livro for livro in livros if livro["id"] == livro_id), None)
+        livro = collection.find_one({"id": livro_id}, {"_id": 0})
         if livro:
             return jsonify(livro)
-        return {"message": "Livro not found"}, 404
+        return {"message": "Livro não encontrado"}, 404
 
     def post(self):
+        payload, err, code = validate_jwt()
+        if err:
+            return err, code
+
         data = request.get_json()
-        livros = load_data()
+        if collection.find_one({"id": data["id"]}):
+            return {"message": "Já existe um livro com este ID"}, 400
 
-        # Validar ID único
-        if any(livro["id"] == data["id"] for livro in livros):
-            return {"message": "Livro with this ID already exists"}, 400
-
-        livros.append(data)
-        save_data(livros)
-        return {"message": "Livro created successfully"}, 201
+        collection.insert_one(data)
+        publish_log("create", data["id"], payload["sub"])
+        return {"message": "Livro criado com sucesso"}, 201
 
     def put(self, livro_id):
-        data = request.get_json()
-        livros = load_data()
-        livro = next((livro for livro in livros if livro["id"] == livro_id), None)
-        if not livro:
-            return {"message": "Livro not found"}, 404
+        payload, err, code = validate_jwt()
+        if err:
+            return err, code
 
-        # Atualizar o livro
-        livro.update(data)
-        save_data(livros)
-        return {"message": "Livro updated successfully"}
+        data = request.get_json()
+        result = collection.update_one({"id": livro_id}, {"$set": data})
+        if result.matched_count == 0:
+            return {"message": "Livro não encontrado"}, 404
+
+        publish_log("update", livro_id, payload["sub"])
+        return {"message": "Livro atualizado com sucesso"}
 
     def delete(self, livro_id):
-        livros = load_data()
-        livro = next((livro for livro in livros if livro["id"] == livro_id), None)
-        if not livro:
-            return {"message": "Livro not found"}, 404
+        payload, err, code = validate_jwt()
+        if err:
+            return err, code
 
-        livros.remove(livro)
-        save_data(livros)
-        return {"message": "Livro deleted successfully"}
+        result = collection.delete_one({"id": livro_id})
+        if result.deleted_count == 0:
+            return {"message": "Livro não encontrado"}, 404
 
-# Rotas da API
+        publish_log("delete", livro_id, payload["sub"])
+        return {"message": "Livro eliminado com sucesso"}
+
+
+# Rotas
 api.add_resource(Livro, '/livros', '/livros/<int:livro_id>')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=55556, debug=True)
+    app.run(host='0.0.0.0', port=55556)
