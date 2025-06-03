@@ -1,6 +1,6 @@
 import grpc
-from grpc import livros_pb2
-from grpc import livros_pb2_grpc
+from servidor.grpc import livros_pb2
+from servidor.grpc import livros_pb2_grpc
 
 
 def listar_livros(stub):
