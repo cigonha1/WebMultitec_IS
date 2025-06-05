@@ -110,4 +110,4 @@ def add_csp_header(response):
 api.add_resource(Livro, '/livros', '/livros/<int:livro_id>')
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=55556)
+    app.run(host='192.168.246.33', port=55556)

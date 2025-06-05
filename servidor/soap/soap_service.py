@@ -161,6 +161,6 @@ application = Application(
 wsgi_app = WsgiApplication(application)
 
 if __name__ == "__main__":
-    print("SOAP service running on http://0.0.0.0:55555")
-    server = make_server('0.0.0.0', 55555, wsgi_app)
+    print("SOAP service running on http://192.168.246.33:55555")
+    server = make_server('192.168.246.33', 55555, wsgi_app)
     server.serve_forever()

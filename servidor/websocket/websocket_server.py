@@ -62,4 +62,4 @@ def rabbitmq_listener():
 threading.Thread(target=rabbitmq_listener, daemon=True).start()
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="198.168.246.33", port=8000)

@@ -160,4 +160,4 @@ def add_csp_header(response):
     return response
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=55557, debug=True)
+    app.run(host="192.168.246.33", port=55557, debug=True)
