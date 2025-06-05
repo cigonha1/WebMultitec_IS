@@ -65,12 +65,15 @@ class LivroService(ServiceBase):
 
     @rpc(_returns=Array(LivroModel))
     def list_livros(ctx):
+        # Adiciona o header CSP à resposta SOAP
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         _ = LivroService._validate_jwt(ctx)
         livros = list(collection.find({}, {"_id": 0}))
         return livros
 
     @rpc(Integer, _returns=LivroModel)
     def get_livro(ctx, livro_id):
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         _ = LivroService._validate_jwt(ctx)
         livro = collection.find_one({"id": livro_id}, {"_id": 0})
         if livro:
@@ -79,6 +82,7 @@ class LivroService(ServiceBase):
 
     @rpc(LivroModel, _returns=Unicode)
     def create_livro(ctx, livro):
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         payload = LivroService._validate_jwt(ctx)
         if collection.find_one({"id": livro.id}):
             raise ValueError("Já existe livro com este ID")
@@ -94,6 +98,7 @@ class LivroService(ServiceBase):
 
     @rpc(Integer, LivroModel, _returns=Unicode)
     def update_livro(ctx, livro_id, livro):
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         payload = LivroService._validate_jwt(ctx)
         result = collection.update_one({"id": livro_id}, {"$set": {
             "titulo": livro.titulo,
@@ -107,6 +112,7 @@ class LivroService(ServiceBase):
 
     @rpc(Integer, _returns=Unicode)
     def delete_livro(ctx, livro_id):
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         payload = LivroService._validate_jwt(ctx)
         result = collection.delete_one({"id": livro_id})
         if result.deleted_count == 0:
@@ -117,24 +123,28 @@ class LivroService(ServiceBase):
     # Métodos para exportação/importação
     @rpc(_returns=Unicode)
     def exportar_json_rpc(ctx):
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         _ = LivroService._validate_jwt(ctx)
         exportar_json()
         return "Exportação JSON concluída."
 
     @rpc(_returns=Unicode)
     def importar_json_rpc(ctx):
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         _ = LivroService._validate_jwt(ctx)
         importar_json()
         return "Importação JSON concluída."
 
     @rpc(_returns=Unicode)
     def exportar_xml_rpc(ctx):
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         _ = LivroService._validate_jwt(ctx)
         exportar_xml()
         return "Exportação XML concluída."
 
     @rpc(_returns=Unicode)
     def importar_xml_rpc(ctx):
+        ctx.transport.resp_headers['Content-Security-Policy'] = "default-src 'self'"
         _ = LivroService._validate_jwt(ctx)
         importar_xml()
         return "Importação XML concluída."

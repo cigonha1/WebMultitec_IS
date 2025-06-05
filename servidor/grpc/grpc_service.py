@@ -116,8 +116,18 @@ class LivroService(livros_pb2_grpc.LivroServiceServicer):
 
 
 def serve():
+    import grpc
+    from concurrent import futures
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     livros_pb2_grpc.add_LivroServiceServicer_to_server(LivroService(), server)
+    # Adiciona interceptor para CSP
+    class CSPInterceptor(grpc.ServerInterceptor):
+        def intercept_service(self, continuation, handler_call_details):
+            def new_behavior(request, context):
+                context.send_initial_metadata((('content-security-policy', "default-src 'self'"),))
+                return continuation(handler_call_details).unary_unary(request, context)
+            return grpc.unary_unary_rpc_method_handler(new_behavior)
+    server.intercept_service(CSPInterceptor())
     server.add_insecure_port('[::]:55558')
     print("Servidor gRPC a correr na porta 55558...")
     server.start()

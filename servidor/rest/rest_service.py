@@ -101,6 +101,10 @@ class Livro(Resource):
         publish_log("delete", livro_id, payload["sub"])
         return {"message": "Livro eliminado com sucesso"}
 
+@app.after_request
+def add_csp_header(response):
+    response.headers['Content-Security-Policy'] = "default-src 'self'"
+    return response
 
 # Rotas
 api.add_resource(Livro, '/livros', '/livros/<int:livro_id>')

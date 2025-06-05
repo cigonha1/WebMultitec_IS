@@ -154,5 +154,10 @@ app.add_url_rule(
     view_func=GraphQLView.as_view("graphql", schema=schema, graphiql=True)  # graphiql=True para interface interativa
 )
 
+@app.after_request
+def add_csp_header(response):
+    response.headers['Content-Security-Policy'] = "default-src 'self'"
+    return response
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=55557, debug=True)
