@@ -5,7 +5,7 @@ FROM python:3.13.2
 WORKDIR /app
 
 # Copie os arquivos do serviço para o container
-COPY documentacao/requirements.txt .
+COPY ../../documentacao/requirements.txt .
 
 # Copie o restante dos arquivos do serviço para o container
 COPY . .
